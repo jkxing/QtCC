@@ -1,0 +1,20 @@
+<RCC>
+    <qresource prefix="/image">
+        <file>background.png</file>
+        <file alias="redSoldier">兵.png</file>
+        <file alias="redCar">車.png</file>
+        <file alias="blackCar">黑車.png</file>
+        <file alias="blackHorse">黑马.png</file>
+        <file alias="blackPao">黑炮.png</file>
+        <file alias="blackEle">黑象.png</file>
+        <file alias="blackBoss">将.png</file>
+        <file alias="redHorse">马.png</file>
+        <file alias="redPao">炮.png</file>
+        <file alias="blackMan">士.png</file>
+        <file alias="redMan">仕.png</file>
+        <file alias="redBoss">帥.png</file>
+        <file alias="redEle">相.png</file>
+        <file alias="blackSoldier">卒.png</file>
+        <file alias="select">select.png</file>
+    </qresource>
+</RCC>
