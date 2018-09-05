@@ -8,6 +8,7 @@
 #include <QTextStream>
 #include <QMessageBox>
 
+#include <connectdialog.h>
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
@@ -15,7 +16,6 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->setupUi(this);
     scene = new QGraphicsScene(this);
     ui->graphicsView->setScene(scene);
-    int x=70,y=70;
     for(int i=0;i<10;i++)
     {
          for(int j=0;j<9;j++)
@@ -29,35 +29,10 @@ MainWindow::MainWindow(QWidget *parent) :
     QObject::connect(tcpServer,SIGNAL(newConnection()),this,SLOT(acceptConnection()));
     game = nullptr;
     tcpSocket = nullptr;
-}
-
-
-void MainWindow::acceptConnection()
-{
-    tcpSocket = tcpServer->nextPendingConnection();
-    qDebug()<<"connected "<<tcpSocket->peerAddress()<<tcpSocket->peerPort();
-    QObject::connect(tcpSocket,SIGNAL(readyRead()),this,SLOT(readData()));
-}
-
-void MainWindow::readData()
-{
-    QByteArray arr = tcpSocket->readAll();
-    qDebug()<<"received "<<arr;
-    if(game == nullptr) return;
-    qDebug()<<"giving to game ";
-    game->receivedData(arr);
-}
-
-void MainWindow::sendData(QByteArray arr)
-{
-    qDebug()<<"send "<<arr;
-    if(tcpSocket==nullptr)
-    {
-
-        qDebug()<<"no socket ";
-        return;
-    }
-    tcpSocket->write(arr);
+    ui->pushButton->setEnabled(false);
+    ui->pushButton_2->setEnabled(false);
+    timer = new QTimer(this);
+    connect(timer, SIGNAL(timeout()), this, SLOT(onTimeout()));
 }
 
 MainWindow::~MainWindow()
@@ -65,31 +40,181 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
+void MainWindow::gameStart()
+{
+    if(game!=nullptr)
+    {
+        delete game;
+        game=nullptr;
+    }
+    if(scene!=nullptr)
+    {
+        delete scene;
+        scene=nullptr;
+    }
+    scene = new QGraphicsScene(this);
+    game = new Game(scene,identity,nullptr);
+    connect(game,SIGNAL(startTimeLimit),this,SLOT(startTimeLimit()));
+    connect(game,SIGNAL(stopTimeLimit),this,SLOT(stopTimeLimit()));
+    connect(game,SIGNAL(sendData(QByteArray)),this,SLOT(sendData(QByteArray)));
+    game->start();
+}
+
+void MainWindow::win()
+{
+    QMessageBox::information(this,"Congratulation","You win");
+}
+
+void MainWindow::lose()
+{
+    QMessageBox::information(this,"sorry","You lose");
+    QByteArray arr;
+    arr.clear();
+    arr.append("3");
+    sendData(arr);
+}
+
+void MainWindow::startTimeLimit()
+{
+    seconds = 60;
+    timer->start(1000);
+}
+
+void MainWindow::endTimeLimit()
+{
+    timer->stop();
+}
+
+void MainWindow::onTimeOut()
+{
+    seconds--;
+    ui->lcdNumber->display(QString::number(seconds));
+    if(seconds==0) lose();
+}
+void MainWindow::acceptConnection()
+{
+    identity = 0;
+    tcpSocket = tcpServer->nextPendingConnection();
+    QObject::connect(tcpSocket,SIGNAL(readyRead()),this,SLOT(readData()));
+    qDebug()<<"client connected"<<tcpSocket->peerAddress()<<tcpSocket->peerPort();
+    ui->lineEdit->setText(tcpSocket->peerAddress().toString());
+    ui->pushButton->setText(tr("start"));
+}
+
+void MainWindow::connectToHost(QHostAddress ip,qint16 port)
+{
+    tcpSocket = new QTcpSocket(this);
+    QObject::connect(tcpSocket,SIGNAL(connected()),this,SLOT(connectSucceed()));
+    QObject::connect(tcpSocket,SIGNAL(readyRead()),this,SLOT(readData()));
+    tcpSocket->connectToHost(ip,quint16(port));
+    qDebug()<<"connecting to server";
+}
+
+void MainWindow::connectSucceed()
+{
+    identity = 1;
+    qDebug()<<"server connected";
+    ui->lineEdit->setText(tcpSocket->peerAddress().toString());
+    ui->pushButton->setText(tr("ready"));
+    ui->pushButton->setEnabled(true);
+}
+
+void MainWindow::readData()
+{
+    QByteArray arr = tcpSocket->readAll();
+    qDebug()<<"received "<<arr;
+    if(arr.at(0)=='3')
+    {
+        win();
+    }
+    else if(arr.at(0)=='4')
+    {
+        ui->pushButton->setEnabled(true);
+    }
+    else if(arr.at(0)=='5')
+    {
+        gameStart();
+    }
+    else
+    {
+        if(game == nullptr) return;
+        qDebug()<<"giving to game ";
+        game->receivedData(arr);
+    }
+}
+
+void MainWindow::sendData(QByteArray arr)
+{
+    qDebug()<<"send "<<arr;
+    if(tcpSocket==nullptr)
+    {
+        qDebug()<<"no socket ";
+        return;
+    }
+    tcpSocket->write(arr);
+}
+
 void MainWindow::on_pushButton_clicked()
 {
-    game = new Game(scene);
-    QObject::connect(game,SIGNAL(sendData(QByteArray)),this,SLOT(sendData(QByteArray)));
-    connectToHost();
-    //game->start();
+    if(identity==1)
+    {
+        QByteArray arr;
+        arr.clear();
+        arr.append("4");
+        sendData(arr);
+    }
+    else
+    {
+        QByteArray arr;
+        arr.clear();
+        arr.append("5");
+        sendData(arr);
+        gameStart();
+    }
+}
+
+void MainWindow::on_pushButton_2_clicked()
+{
+    lose();
 }
 
 void MainWindow::on_actionexit_triggered()
 {
-    QFileDialog*fileDialog=new QFileDialog(this);
+    /*QFileDialog*fileDialog=new QFileDialog(this);
     fileDialog->setWindowTitle(tr("Open Text"));
     fileDialog->setDirectory("./");
     if(fileDialog->exec() == QDialog::Accepted) {
         QString path = fileDialog->selectedFiles()[0];
         qDebug()<<path;
         QFile *file=new QFile(path);
-        game = new Game(scene,file);
-    }
+        file->open(QIODevice::ReadOnly);
+        QByteArray arr;
+        arr.clear();
+        arr.append("2");
+        arr.append(file->readAll());
+        file->close();
+        sendData(arr);
+        game = new Game(scene);
+        game->loadFromFile(file);
+        QObject::connect(game,SIGNAL(sendData(QByteArray)),this,SLOT(sendData(QByteArray)));
+    }*/
 }
 
-void MainWindow::connectToHost()
+void MainWindow::on_actionconnect_triggered()
 {
-    tcpSocket = new QTcpSocket(this);
-    tcpSocket->connectToHost(QHostAddress("10.0.0.3"),3737);
-    QObject::connect(tcpSocket,SIGNAL(readyRead()),this,SLOT(readData()));
-    qDebug()<<"connecting";
+    ConnectDialog dialog(this);
+    pair<QHostAddress,qint16> tmp = dialog.work();
+    qDebug()<<tmp.first<<" "<<tmp.second;
+    connectToHost(tmp.first,tmp.second);
 }
+
+void MainWindow::on_actionadd_triggered()
+{
+    qApp->exit();
+}
+
+void MainWindow::on_pushButton_3_clicked()
+{
+
+}
+

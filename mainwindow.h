@@ -20,11 +20,20 @@ class MainWindow : public QMainWindow
 {
     Q_OBJECT
 public:
+    QGraphicsScene* scene;
     QTcpServer *tcpServer;
     QTcpSocket *tcpSocket;
+    QTimer* timer;
+    Game* game;
+    bool identity;
+    int seconds;
     explicit MainWindow(QWidget *parent = nullptr);
-    void connectToHost();
     ~MainWindow();
+    void connectToHost(QHostAddress ip,qint16 port);
+    void connectSucceed();
+    void gameStart();
+    void win();
+    void lose();
 public slots:
     void on_pushButton_clicked();
 
@@ -35,10 +44,23 @@ public slots:
     void readData();
 
     void sendData(QByteArray arr);
+
+    void on_pushButton_2_clicked();
+
+    void on_actionadd_triggered();
+
+    void on_pushButton_3_clicked();
+
+    void on_actionconnect_triggered();
+
+    void startTimeLimit();
+
+    void endTimeLimit();
+
+    void onTimeOut();
+
 private:
     Ui::MainWindow *ui;
-    QGraphicsScene* scene;
-    Game* game;
 };
 
 #endif // MAINWINDOW_H

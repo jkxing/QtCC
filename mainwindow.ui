@@ -30,35 +30,15 @@
    <widget class="QLabel" name="label">
     <property name="geometry">
      <rect>
-      <x>610</x>
-      <y>50</y>
-      <width>81</width>
-      <height>21</height>
+      <x>570</x>
+      <y>40</y>
+      <width>121</width>
+      <height>31</height>
      </rect>
     </property>
     <property name="text">
      <string>我方</string>
     </property>
-   </widget>
-   <widget class="QTabWidget" name="tabWidget">
-    <property name="geometry">
-     <rect>
-      <x>540</x>
-      <y>190</y>
-      <width>181</width>
-      <height>241</height>
-     </rect>
-    </property>
-    <widget class="QWidget" name="tab">
-     <attribute name="title">
-      <string>Tab 1</string>
-     </attribute>
-    </widget>
-    <widget class="QWidget" name="tab_2">
-     <attribute name="title">
-      <string>Tab 2</string>
-     </attribute>
-    </widget>
    </widget>
    <widget class="QLCDNumber" name="lcdNumber">
     <property name="geometry">
@@ -74,26 +54,48 @@
     <property name="geometry">
      <rect>
       <x>580</x>
-      <y>520</y>
+      <y>390</y>
       <width>80</width>
-      <height>15</height>
+      <height>31</height>
      </rect>
     </property>
     <property name="text">
-     <string>准备</string>
+     <string>准备/开始</string>
     </property>
    </widget>
    <widget class="QPushButton" name="pushButton_2">
     <property name="geometry">
      <rect>
       <x>580</x>
-      <y>470</y>
+      <y>310</y>
       <width>80</width>
-      <height>15</height>
+      <height>31</height>
      </rect>
     </property>
     <property name="text">
      <string>认输</string>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="lineEdit">
+    <property name="geometry">
+     <rect>
+      <x>570</x>
+      <y>210</y>
+      <width>113</width>
+      <height>41</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>Agency FB</family>
+      <pointsize>20</pointsize>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">backgroud-color:rgba(0,0,0,255)</string>
+    </property>
+    <property name="text">
+     <string>127.0.0.1</string>
     </property>
    </widget>
   </widget>
@@ -113,6 +115,7 @@
     <addaction name="actionexit"/>
     <addaction name="actionsave"/>
     <addaction name="actionadd"/>
+    <addaction name="actionconnect"/>
    </widget>
    <addaction name="menu"/>
   </widget>
@@ -139,6 +142,11 @@
    </property>
    <property name="shortcut">
     <string>Ctrl+Q</string>
+   </property>
+  </action>
+  <action name="actionconnect">
+   <property name="text">
+    <string>connect</string>
    </property>
   </action>
  </widget>

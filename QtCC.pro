@@ -14,14 +14,16 @@ TEMPLATE = app
 # Directories
 
 FORMS += \
-    mainwindow.ui
+    mainwindow.ui \
+    connectdialog.ui
 
 HEADERS += \
     mainwindow.h \
     piece.h \
     position.h \
     game.h \
-    const.h
+    const.h \
+    connectdialog.h
 
 SOURCES += \
     mainwindow.cpp \
@@ -29,7 +31,8 @@ SOURCES += \
     piece.cpp \
     position.cpp \
     game.cpp \
-    const.cpp
+    const.cpp \
+    connectdialog.cpp
 
 RESOURCES += \
     resource.qrc
