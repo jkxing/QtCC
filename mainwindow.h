@@ -30,7 +30,6 @@ public:
     explicit MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
     void connectToHost(QHostAddress ip,qint16 port);
-    void connectSucceed();
     void gameStart();
     void win();
     void lose();
@@ -55,9 +54,11 @@ public slots:
 
     void startTimeLimit();
 
-    void endTimeLimit();
+    void stopTimeLimit();
 
     void onTimeOut();
+
+    void connectSucceed();
 
 private:
     Ui::MainWindow *ui;

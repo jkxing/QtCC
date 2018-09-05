@@ -32,7 +32,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->pushButton->setEnabled(false);
     ui->pushButton_2->setEnabled(false);
     timer = new QTimer(this);
-    connect(timer, SIGNAL(timeout()), this, SLOT(onTimeout()));
+    connect(timer, SIGNAL(timeout()), this, SLOT(onTimeOut()));
 }
 
 MainWindow::~MainWindow()
@@ -53,9 +53,10 @@ void MainWindow::gameStart()
         scene=nullptr;
     }
     scene = new QGraphicsScene(this);
+    ui->graphicsView->setScene(scene);
     game = new Game(scene,identity,nullptr);
-    connect(game,SIGNAL(startTimeLimit),this,SLOT(startTimeLimit()));
-    connect(game,SIGNAL(stopTimeLimit),this,SLOT(stopTimeLimit()));
+    connect(game,SIGNAL(startTimeLimit()),this,SLOT(startTimeLimit()));
+    connect(game,SIGNAL(stopTimeLimit()),this,SLOT(stopTimeLimit()));
     connect(game,SIGNAL(sendData(QByteArray)),this,SLOT(sendData(QByteArray)));
     game->start();
 }
@@ -76,17 +77,19 @@ void MainWindow::lose()
 
 void MainWindow::startTimeLimit()
 {
+    qDebug()<<"startTimeLimit";
     seconds = 60;
     timer->start(1000);
 }
 
-void MainWindow::endTimeLimit()
+void MainWindow::stopTimeLimit()
 {
     timer->stop();
 }
 
 void MainWindow::onTimeOut()
 {
+    qDebug()<<"working";
     seconds--;
     ui->lcdNumber->display(QString::number(seconds));
     if(seconds==0) lose();

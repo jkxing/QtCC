@@ -60,6 +60,7 @@ Game::Game(QGraphicsScene* scene,bool identity,QFile* file):scene(scene){
 
 void Game::start()
 {
+    qDebug()<<"checking identity "<<isWaiting;
     if(isWaiting == 0)
         emit startTimeLimit();
 }
