@@ -1,6 +1,7 @@
 #include "game.h"
 #include <QTextStream>
 #include <QMessageBox>
+#include <QApplication>
 void Game::updateMap()
 {
     memset(mp,-1,sizeof(mp));
@@ -14,12 +15,16 @@ void Game::updateMap()
         pieces[1][i]->update();
     }
     for(int i=0;i<16;i++)
+    {
+       // qDebug()<<i<<" "<<pieces[1][i]->i<<" "<<pieces[1][i]->j<<" "<<pieces[1][i]->canMove(pieces[0][15]->i,pieces[0][15]->j,mp);
         if(pieces[1][i]->isDie==0&&pieces[1][i]->canMove(pieces[0][15]->i,pieces[0][15]->j,mp))
-            qDebug()<<"danger";
+            QApplication::beep();
+    }
 }
 Game::Game(QGraphicsScene* scene,bool identity,QFile* file):scene(scene){
     //scene->addRect(QRectF(0,0,100,100));
     isWaiting = identity^1;
+    isFirst = identity;
     scene->clear();
     for(int i=0;i<5;i++)
     {
@@ -164,6 +169,146 @@ void Game::possiblePosition(BasicPiece* piece)
     updateMap();
 }
 
+char* Game::toChar(int i,int j)
+{
+    char* ch = new char(7);
+    ch[0]='<';
+    ch[1]=8-j+'0';
+    ch[2]=',';
+    ch[3]=9-i+'0';
+    ch[4]='>';
+    ch[5]=' ';
+    ch[6]='\0';
+    return ch;
+}
+char* Game::toChar(int i)
+{
+    char* ch = new char(3);
+    ch[0]=i+'0';
+    ch[1]=' ';
+    ch[2]='\0';
+    return ch;
+}
+void Game::save()
+{
+    QFile file("D:/canju.txt");
+    file.open(QIODevice::WriteOnly);
+    file.write("red\n");
+    if(pieces[0][15]->isDie==0)
+    {
+        file.write("1 ");
+        file.write(toChar(pieces[0][15]->i,pieces[0][15]->j));
+        file.write("\n");
+    }
+    else file.write("0\n");
+    int cnt=0;
+    for(int i=0;i<2;i++)
+        if(pieces[0][13+i]->isDie==0) cnt++;
+    file.write(toChar(cnt));
+    for(int i=0;i<2;i++)
+        if(pieces[0][13+i]->isDie==0)
+            file.write(toChar(pieces[0][13+i]->i,pieces[0][13+i]->j));
+    file.write("\n");
+    cnt=0;
+    for(int i=0;i<2;i++)
+        if(pieces[0][11+i]->isDie==0) cnt++;
+    file.write(toChar(cnt));
+    for(int i=0;i<2;i++)
+        if(pieces[0][11+i]->isDie==0)
+            file.write(toChar(pieces[0][11+i]->i,pieces[0][11+i]->j));
+    file.write("\n");
+    cnt=0;
+    for(int i=0;i<2;i++)
+        if(pieces[0][5+i]->isDie==0) cnt++;
+    file.write(toChar(cnt));
+    for(int i=0;i<2;i++)
+        if(pieces[0][5+i]->isDie==0)
+            file.write(toChar(pieces[0][5+i]->i,pieces[0][5+i]->j));
+    file.write("\n");
+    cnt=0;
+    for(int i=0;i<2;i++)
+        if(pieces[0][7+i]->isDie==0) cnt++;
+    file.write(toChar(cnt));
+    for(int i=0;i<2;i++)
+        if(pieces[0][7+i]->isDie==0)
+            file.write(toChar(pieces[0][7+i]->i,pieces[0][7+i]->j));
+    file.write("\n");
+    cnt=0;
+    for(int i=0;i<2;i++)
+        if(pieces[0][9+i]->isDie==0) cnt++;
+    file.write(toChar(cnt));
+    for(int i=0;i<2;i++)
+        if(pieces[0][9+i]->isDie==0)
+            file.write(toChar(pieces[0][9+i]->i,pieces[0][9+i]->j));
+    file.write("\n");
+    cnt=0;
+    for(int i=0;i<5;i++)
+        if(pieces[0][i]->isDie==0) cnt++;
+    file.write(toChar(cnt));
+    for(int i=0;i<5;i++)
+        if(pieces[0][i]->isDie==0)
+            file.write(toChar(pieces[0][i]->i,pieces[0][i]->j));
+    file.write("\n");
+    file.write("black\n");
+    if(pieces[1][15]->isDie==0)
+    {
+        file.write("1 ");
+        file.write(toChar(pieces[1][15]->i,pieces[1][15]->j));
+        file.write("\n");
+    }
+    else file.write("0\n");
+    cnt=0;
+    for(int i=0;i<2;i++)
+        if(pieces[1][13+i]->isDie==0) cnt++;
+    file.write(toChar(cnt));
+    for(int i=0;i<2;i++)
+        if(pieces[1][13+i]->isDie==0)
+            file.write(toChar(pieces[1][13+i]->i,pieces[1][13+i]->j));
+    file.write("\n");
+    cnt=0;
+    for(int i=0;i<2;i++)
+        if(pieces[0][11+i]->isDie==0) cnt++;
+    file.write(toChar(cnt));
+    for(int i=0;i<2;i++)
+        if(pieces[1][11+i]->isDie==0)
+            file.write(toChar(pieces[1][11+i]->i,pieces[1][11+i]->j));
+    file.write("\n");
+    cnt=0;
+    for(int i=0;i<2;i++)
+        if(pieces[1][5+i]->isDie==0) cnt++;
+    file.write(toChar(cnt));
+    for(int i=0;i<2;i++)
+        if(pieces[1][5+i]->isDie==0)
+            file.write(toChar(pieces[1][5+i]->i,pieces[1][5+i]->j));
+    file.write("\n");
+    cnt=0;
+    for(int i=0;i<2;i++)
+        if(pieces[1][7+i]->isDie==0) cnt++;
+    file.write(toChar(cnt));
+    for(int i=0;i<2;i++)
+        if(pieces[1][7+i]->isDie==0)
+            file.write(toChar(pieces[1][7+i]->i,pieces[1][7+i]->j));
+    file.write("\n");
+    cnt=0;
+    for(int i=0;i<2;i++)
+        if(pieces[1][9+i]->isDie==0) cnt++;
+    file.write(toChar(cnt));
+    for(int i=0;i<2;i++)
+        if(pieces[1][9+i]->isDie==0)
+            file.write(toChar(pieces[1][9+i]->i,pieces[1][9+i]->j));
+    file.write("\n");
+    cnt=0;
+    for(int i=0;i<5;i++)
+        if(pieces[1][i]->isDie==0) cnt++;
+    file.write(toChar(cnt));
+    for(int i=0;i<5;i++)
+        if(pieces[1][i]->isDie==0)
+            file.write(toChar(pieces[1][i]->i,pieces[1][i]->j));
+    file.write("\n");
+    file.close();
+    return;
+
+}
 void Game::cancelPosition()
 {
     for(int i=0;i<10;i++)
@@ -202,6 +347,7 @@ void Game::receivedData(QByteArray arr)
         isWaiting = 0;
         emit startTimeLimit();
     }
+    updateMap();
 }
 
 void Game::loadFromFile(QFile *file)

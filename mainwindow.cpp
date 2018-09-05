@@ -167,6 +167,10 @@ void MainWindow::readData()
     {
         gameStart();
     }
+    else if(arr.at(0)=='6')
+    {
+        game->save();
+    }
     else
     {
         if(game == nullptr) return;
@@ -240,3 +244,12 @@ void MainWindow::on_pushButton_3_clicked()
 
 }
 
+
+void MainWindow::on_actionsave_triggered()
+{
+    QByteArray arr;
+    arr.clear();
+    arr.append("6");
+    sendData(arr);
+    game->save();
+}

@@ -19,6 +19,9 @@ public:
     void updateMap();
     void loadFromFile(QFile *file);
     void start();
+    void save();
+    char* toChar(int i,int j);
+    char* toChar(int i);
 signals:
     void sendData(QByteArray arr);
     void startTimeLimit();

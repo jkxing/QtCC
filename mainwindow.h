@@ -65,6 +65,9 @@ public slots:
 
     void lose();
 
+private slots:
+    void on_actionsave_triggered();
+
 private:
     Ui::MainWindow *ui;
 };
