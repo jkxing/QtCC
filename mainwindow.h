@@ -31,8 +31,6 @@ public:
     ~MainWindow();
     void connectToHost(QHostAddress ip,qint16 port);
     void gameStart();
-    void win();
-    void lose();
 public slots:
     void on_pushButton_clicked();
 
@@ -59,6 +57,12 @@ public slots:
     void onTimeOut();
 
     void connectSucceed();
+
+    void loseNoSend();
+
+    void win();
+
+    void lose();
 
 private:
     Ui::MainWindow *ui;

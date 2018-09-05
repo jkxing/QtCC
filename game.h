@@ -23,6 +23,8 @@ signals:
     void sendData(QByteArray arr);
     void startTimeLimit();
     void stopTimeLimit();
+    void lose();
+    void win();
 public slots:
     void possiblePosition(BasicPiece *);
     void cancelPosition();

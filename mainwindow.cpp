@@ -58,6 +58,8 @@ void MainWindow::gameStart()
     connect(game,SIGNAL(startTimeLimit()),this,SLOT(startTimeLimit()));
     connect(game,SIGNAL(stopTimeLimit()),this,SLOT(stopTimeLimit()));
     connect(game,SIGNAL(sendData(QByteArray)),this,SLOT(sendData(QByteArray)));
+    connect(game,SIGNAL(win()),this,SLOT(win()));
+    connect(game,SIGNAL(lose()),this,SLOT(loseNoSend));
     game->start();
     ui->pushButton_2->setEnabled(true);
 }
@@ -74,6 +76,11 @@ void MainWindow::lose()
     arr.clear();
     arr.append("3");
     sendData(arr);
+}
+
+void MainWindow::loseNoSend()
+{
+    QMessageBox::information(this,"sorry","You lose");
 }
 
 void MainWindow::startTimeLimit()

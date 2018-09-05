@@ -80,6 +80,8 @@ void Game::possiblePosition(BasicPiece* piece)
                     if(pieces[1][k]->At(piece->i,piece->j))
                     {
                         pieces[1][k]->isDie = 1;
+                        if(k==15)
+                            emit win();
                     }
                 scene->addItem(pieces[0][i]);
                 qDebug()<<"working "<<i;
@@ -160,7 +162,11 @@ void Game::receivedData(QByteArray arr)
         scene->addItem(pieces[1][t]);
         for(int i=0;i<16;i++)
             if(pieces[0][i]->At(x,y))
+             {
                 pieces[0][i]->isDie=1;
+                if(i==15)
+                    emit lose();
+             }
         isWaiting = 0;
         emit startTimeLimit();
     }
