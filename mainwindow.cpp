@@ -27,13 +27,15 @@ MainWindow::MainWindow(QWidget *parent) :
     tcpServer = new QTcpServer(this);
     tcpServer->listen(QHostAddress::Any,3737);
     QObject::connect(tcpServer,SIGNAL(newConnection()),this,SLOT(acceptConnection()));
-    QObject::connect(game,SIGNAL(sendData(QByteArray)),this,SLOT(sendData(QByteArray)));
+    game = nullptr;
+    tcpSocket = nullptr;
 }
 
 
 void MainWindow::acceptConnection()
 {
     tcpSocket = tcpServer->nextPendingConnection();
+    qDebug()<<"connected "<<tcpSocket->peerAddress()<<tcpSocket->peerPort();
     QObject::connect(tcpSocket,SIGNAL(readyRead()),this,SLOT(readData()));
 }
 
@@ -48,6 +50,13 @@ void MainWindow::readData()
 
 void MainWindow::sendData(QByteArray arr)
 {
+    qDebug()<<"send "<<arr;
+    if(tcpSocket==nullptr)
+    {
+
+        qDebug()<<"no socket ";
+        return;
+    }
     tcpSocket->write(arr);
 }
 
@@ -59,6 +68,8 @@ MainWindow::~MainWindow()
 void MainWindow::on_pushButton_clicked()
 {
     game = new Game(scene);
+    QObject::connect(game,SIGNAL(sendData(QByteArray)),this,SLOT(sendData(QByteArray)));
+    connectToHost();
     //game->start();
 }
 
