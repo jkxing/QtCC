@@ -135,6 +135,16 @@ void MainWindow::readData()
 {
     QByteArray arr = tcpSocket->readAll();
     qDebug()<<"received "<<arr;
+    if(arr.at(0)=='2')
+    {
+        arr.remove(0,1);
+        file = new QFile("D:/canju.txt");
+        if(file->open(QIODevice::ReadWrite))
+        {
+            file->write(arr);
+            file->close();
+        }
+    }
     if(arr.at(0)=='3')
     {
         win();

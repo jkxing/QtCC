@@ -53,15 +53,9 @@ Game::Game(QGraphicsScene* scene,bool identity,QFile* file):scene(scene){
     pieces[1][15]=new Boss(Pos[0][4],1);
     for(int i=0;i<16;i++)
         scene->addItem(pieces[1][i]);
+    qDebug()<<file;
     if(file!=nullptr)
     {
-        file->open(QIODevice::ReadOnly);
-        QByteArray arr;
-        arr.clear();
-        arr.append("2");
-        arr.append(file->readAll());
-        file->close();
-        sendData(arr);
         loadFromFile(file);
     }
     updateMap();
@@ -178,18 +172,6 @@ void Game::receivedData(QByteArray arr)
              }
         isWaiting = 0;
         emit startTimeLimit();
-    }
-    else if(arr.at(0)=='2')
-    {
-        arr.remove(0,1);
-        QFile *file = new QFile("D:/canju.txt");
-        isWaiting = 1;
-        if(file->open(QIODevice::ReadWrite))
-        {
-            file->write(arr);
-            file->close();
-        }
-        loadFromFile(file);
     }
 }
 
