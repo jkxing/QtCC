@@ -35,18 +35,18 @@ Game::Game(QGraphicsScene* scene):scene(scene){
     }
     for(int i=0;i<5;i++)
     {
-        pieces[1][i] = new Soldier(Pos[3][i*2],1);
+        pieces[1][i] = new Soldier(Pos[3][(4-i)*2],1);
     }
-    pieces[1][5]=new Horse(Pos[0][1],1);
-    pieces[1][6]=new Horse(Pos[0][7],1);
-    pieces[1][7]=new Car(Pos[0][0],1);
-    pieces[1][8]=new Car(Pos[0][8],1);
-    pieces[1][9]=new Pao(Pos[2][1],1);
-    pieces[1][10]=new Pao(Pos[2][7],1);
-    pieces[1][11]=new Ele(Pos[0][2],1);
-    pieces[1][12]=new Ele(Pos[0][6],1);
-    pieces[1][13]=new Man(Pos[0][3],1);
-    pieces[1][14]=new Man(Pos[0][5],1);
+    pieces[1][5]=new Horse(Pos[0][7],1);
+    pieces[1][6]=new Horse(Pos[0][1],1);
+    pieces[1][7]=new Car(Pos[0][8],1);
+    pieces[1][8]=new Car(Pos[0][0],1);
+    pieces[1][9]=new Pao(Pos[2][7],1);
+    pieces[1][10]=new Pao(Pos[2][1],1);
+    pieces[1][11]=new Ele(Pos[0][6],1);
+    pieces[1][12]=new Ele(Pos[0][2],1);
+    pieces[1][13]=new Man(Pos[0][5],1);
+    pieces[1][14]=new Man(Pos[0][3],1);
     pieces[1][15]=new Boss(Pos[0][4],1);
     for(int i=0;i<16;i++)
         scene->addItem(pieces[1][i]);
@@ -136,7 +136,7 @@ void Game::cancelPosition(BasicPiece* piece)
 
 void Game::receivedData(QByteArray arr)
 {
-    qDebug()<<arr;
+    qDebug()<<"game handling data: "<<arr;
     if(arr.at(0)=='1')
     {
         int t = arr.at(1)-'0';

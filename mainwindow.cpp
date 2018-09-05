@@ -91,4 +91,5 @@ void MainWindow::connectToHost()
     tcpSocket = new QTcpSocket(this);
     tcpSocket->connectToHost(QHostAddress("10.0.0.3"),3737);
     QObject::connect(tcpSocket,SIGNAL(readyRead()),this,SLOT(readData()));
+    qDebug()<<"connecting";
 }
