@@ -19,12 +19,13 @@ class MainWindow;
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
+public:
     QTcpServer *tcpServer;
     QTcpSocket *tcpSocket;
-public:
     explicit MainWindow(QWidget *parent = nullptr);
+    void connectToHost();
     ~MainWindow();
-private slots:
+public slots:
     void on_pushButton_clicked();
 
     void on_actionexit_triggered();

@@ -40,6 +40,9 @@ void MainWindow::acceptConnection()
 void MainWindow::readData()
 {
     QByteArray arr = tcpSocket->readAll();
+    qDebug()<<"received "<<arr;
+    if(game == nullptr) return;
+    qDebug()<<"giving to game ";
     game->receivedData(arr);
 }
 
@@ -70,4 +73,11 @@ void MainWindow::on_actionexit_triggered()
         QFile *file=new QFile(path);
         game = new Game(scene,file);
     }
+}
+
+void MainWindow::connectToHost()
+{
+    tcpSocket = new QTcpSocket(this);
+    tcpSocket->connectToHost(QHostAddress("10.0.0.3"),3737);
+    QObject::connect(tcpSocket,SIGNAL(readyRead()),this,SLOT(readData()));
 }
