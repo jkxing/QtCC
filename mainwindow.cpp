@@ -59,6 +59,7 @@ void MainWindow::gameStart()
     connect(game,SIGNAL(stopTimeLimit()),this,SLOT(stopTimeLimit()));
     connect(game,SIGNAL(sendData(QByteArray)),this,SLOT(sendData(QByteArray)));
     game->start();
+    ui->pushButton_2->setEnabled(true);
 }
 
 void MainWindow::win()
