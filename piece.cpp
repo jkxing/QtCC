@@ -27,6 +27,7 @@ void BasicPiece::changePosition(int p,int q)
 }
 
 void BasicPiece::mousePressEvent(QGraphicsSceneMouseEvent* event){
+    qDebug()<<i<<" "<<j<<" "<<id<<" "<<isDie;
     if(isSelect)
         emit deselect(this);
     else
@@ -114,6 +115,7 @@ void Horse::paint(QPainter *painter,const QStyleOptionGraphicsItem *option
 
 bool Horse::canMove(int nx,int ny,int mp[10][10])
 {
+    qDebug()<<"checking "<<nx<<" "<<ny;
     if(mp[nx][ny]==id) return 0;
     if(nx-i==2&&abs(ny-j)==1)
     {
@@ -251,7 +253,12 @@ void Ele::paint(QPainter *painter,const QStyleOptionGraphicsItem *option
 bool Ele::canMove(int nx,int ny,int mp[10][10])
 {
     if(mp[nx][ny]==id) return 0;
-    if(nx>=5&&abs(nx-i)==2&&abs(ny-j)==2)
+    if(id==0&&nx>=5&&abs(nx-i)==2&&abs(ny-j)==2)
+    {
+        if(mp[(i+nx)>>1][(j+ny)>>1]==-1) return 1;
+        return 0;
+    }
+    if(id==1&&nx<5&&abs(nx-i)==2&&abs(ny-j)==2)
     {
         if(mp[(i+nx)>>1][(j+ny)>>1]==-1) return 1;
         return 0;
@@ -284,7 +291,9 @@ void Man::paint(QPainter *painter,const QStyleOptionGraphicsItem *option
 bool Man::canMove(int nx,int ny,int mp[10][10])
 {
     if(mp[nx][ny]==id) return 0;
-    if(nx>6&&ny<6&&ny>2&&abs(i-nx)==1&&abs(j-ny)==1)
+    if(id==0&&nx>6&&ny<6&&ny>2&&abs(i-nx)==1&&abs(j-ny)==1)
+        return 1;
+    if(id==1&&nx<3&&ny<6&&ny>2&&abs(i-nx)==1&&abs(j-ny)==1)
         return 1;
     return 0;
 }
@@ -313,7 +322,7 @@ void Boss::paint(QPainter *painter,const QStyleOptionGraphicsItem *option
 bool Boss::canMove(int nx,int ny,int mp[10][10])
 {
     if(mp[nx][ny]==id) return 0;
-    if(nx>6&&ny<6&&ny>2&&abs(i-nx)+abs(j-ny)==1)
-        return 1;
+    if(id==0&&nx>6&&ny<6&&ny>2&&abs(i-nx)+abs(j-ny)==1) return 1;
+    if(id==1&&nx<3&&ny<6&&ny>2&&abs(i-nx)+abs(j-ny)==1) return 1;
     return 0;
 }

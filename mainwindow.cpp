@@ -72,11 +72,11 @@ void MainWindow::win()
 
 void MainWindow::lose()
 {
-    QMessageBox::information(this,"sorry","You lose");
     QByteArray arr;
     arr.clear();
     arr.append("3");
     sendData(arr);
+    QMessageBox::information(this,"sorry","You lose");
 }
 
 void MainWindow::loseNoSend()
@@ -98,7 +98,6 @@ void MainWindow::stopTimeLimit()
 
 void MainWindow::onTimeOut()
 {
-    qDebug()<<"working";
     seconds--;
     ui->lcdNumber->display(QString::number(seconds));
     if(seconds==0) lose();
