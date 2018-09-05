@@ -18,6 +18,8 @@ public:
     void updateMap();
     void loadFromFile(QFile *file);
     bool isWaiting;
+signals:
+    void sendData(QByteArray arr);
 public slots:
     void possiblePosition(BasicPiece *);
     void cancelPosition(BasicPiece *);

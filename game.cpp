@@ -74,9 +74,14 @@ void Game::possiblePosition(BasicPiece* piece)
                 scene->addItem(pieces[0][i]);
                 qDebug()<<"working "<<i;
                 cancelPosition(pieces[0][i]);
+                QByteArray arr;
+                arr.append("1");
+                arr.append(QString::number(i));
+                arr.append(QString::number(piece->i));
+                arr.append(QString::number(piece->j));
+                emit sendData(arr);
             }
         updateMap();
-
         return;
     }
     for(int i=0;i<16;i++)
@@ -131,11 +136,7 @@ void Game::cancelPosition(BasicPiece* piece)
 
 void Game::receivedData(QByteArray arr)
 {
-    arr.clear();
-    arr.append("1111");
-    for(int i=0;i<3;i++)
-        qDebug()<<"checkarr "<<i<<" "<<arr.at(i);
-
+    qDebug()<<arr;
     if(arr.at(0)=='1')
     {
         int t = arr.at(1)-'0';
@@ -183,39 +184,362 @@ void Game::receivedData(QByteArray arr)
 
 }
 
-Game::Game(QGraphicsScene *scene, QFile *file):scene(scene)
+Game::Game(QGraphicsScene *scene, QFile *file):Game(scene)
 {
-    scene->clear();
     isWaiting = 0;
+    if(!file->open(QIODevice::ReadOnly))
+    {
+        QByteArray arr;
+        arr.append("2");
+        arr.append(file->readAll());
+        emit sendData(arr);
+    }
+    file->close();
     loadFromFile(file);
+
 }
 
 void Game::loadFromFile(QFile *file)
 {
-    if(!file->open(QIODevice::WriteOnly))
+    if(!file->open(QIODevice::ReadOnly))
     {
         qDebug()<<"load error";
         return;
     }
     QTextStream in(file);
     QString str;
-    if(isWaiting)
-    {
-        while(1)
+    in>>str;
+    int num,x,y;
+    in>>num;
+    in>>str;
+    y=str.toStdString()[1]-'0';
+        x=str.toStdString()[3]-'0';
+        qDebug()<<num<<" "<<x<<" "<<y;
+        if(!isWaiting)
         {
-            in>>str;
-            if(str=="black")
-                break;
+            x=9-x;
+            y=8-y;
+            pieces[0][15]->changePosition(x,y);
         }
-    }
-    else
-    {
-        while(1)
+        else
+        {
+            pieces[1][15]->changePosition(x,y);
+        }
+        in>>num;
+        for(int i=0;i<num;i++)
         {
             in>>str;
-            if(str=="red")
-                break;
+            y=str.toStdString()[1]-'0';
+            x=str.toStdString()[3]-'0';
+            if(!isWaiting)
+            {
+                x=9-x;
+                y=8-y;
+                pieces[0][13+i]->changePosition(x,y);
+            }
+            else
+            {
+                pieces[1][13+i]->changePosition(x,y);
+            }
+        }
+        for(int i=13+num;i<15;i++)
+        {
+            if(!isWaiting)
+                pieces[0][i]->isDie=1;
+            else
+                pieces[1][i]->isDie=1;
         }
 
-    }
+        in>>num;
+        for(int i=0;i<num;i++)
+        {
+            in>>str;
+            y=str.toStdString()[1]-'0';
+            x=str.toStdString()[3]-'0';
+            if(!isWaiting)
+            {
+                x=9-x;
+                y=8-y;
+                pieces[0][11+i]->changePosition(x,y);
+            }
+            else
+            {
+                pieces[1][11+i]->changePosition(x,y);
+            }
+        }
+        for(int i=11+num;i<13;i++)
+        {
+            if(!isWaiting)
+                pieces[0][i]->isDie=1;
+            else
+                pieces[1][i]->isDie=1;
+        }
+
+
+        in>>num;
+        for(int i=0;i<num;i++)
+        {
+            in>>str;
+            y=str.toStdString()[1]-'0';
+            x=str.toStdString()[3]-'0';
+            if(!isWaiting)
+            {
+                x=9-x;
+                y=8-y;
+                pieces[0][5+i]->changePosition(x,y);
+            }
+            else
+            {
+                pieces[1][5+i]->changePosition(x,y);
+            }
+        }
+        for(int i=5+num;i<7;i++)
+        {
+            if(!isWaiting)
+                pieces[0][i]->isDie=1;
+            else
+                pieces[1][i]->isDie=1;
+        }
+
+        in>>num;
+        for(int i=0;i<num;i++)
+        {
+            in>>str;
+            y=str.toStdString()[1]-'0';
+            x=str.toStdString()[3]-'0';
+            if(!isWaiting)
+            {
+                x=9-x;
+                y=8-y;
+                pieces[0][7+i]->changePosition(x,y);
+            }
+            else
+            {
+                pieces[1][7+i]->changePosition(x,y);
+            }
+        }
+        for(int i=7+num;i<9;i++)
+        {
+            if(!isWaiting)
+                pieces[0][i]->isDie=1;
+            else
+                pieces[1][i]->isDie=1;
+        }
+
+        in>>num;
+        for(int i=0;i<num;i++)
+        {
+            in>>str;
+            y=str.toStdString()[1]-'0';
+            x=str.toStdString()[3]-'0';
+            if(!isWaiting)
+            {
+                x=9-x;
+                y=8-y;
+                pieces[0][9+i]->changePosition(x,y);
+            }
+            else
+            {
+                pieces[1][9+i]->changePosition(x,y);
+            }
+        }
+        for(int i=9+num;i<11;i++)
+        {
+            if(!isWaiting)
+                pieces[0][i]->isDie=1;
+            else
+                pieces[1][i]->isDie=1;
+        }
+        in>>num;
+        for(int i=0;i<num;i++)
+        {
+            in>>str;
+            y=str.toStdString()[1]-'0';
+            x=str.toStdString()[3]-'0';
+            if(!isWaiting)
+            {
+                x=9-x;
+                y=8-y;
+                pieces[0][i]->changePosition(x,y);
+            }
+            else
+            {
+                pieces[1][i]->changePosition(x,y);
+            }
+        }
+        for(int i=num;i<5;i++)
+        {
+            if(!isWaiting)
+                pieces[0][i]->isDie=1;
+            else
+                pieces[1][i]->isDie=1;
+        }
+
+        in>>str;
+
+        in>>num;
+            in>>str;
+            y=str.toStdString()[1]-'0';
+            x=str.toStdString()[3]-'0';
+            if(isWaiting)
+            {
+                pieces[0][15]->changePosition(x,y);
+            }
+            else
+            {
+                x=9-x;
+                y=8-y;
+                pieces[1][15]->changePosition(x,y);
+            }
+
+            in>>num;
+            for(int i=0;i<num;i++)
+            {
+                in>>str;
+                y=str.toStdString()[1]-'0';
+                x=str.toStdString()[3]-'0';
+                if(isWaiting)
+                {
+                    pieces[0][13+i]->changePosition(x,y);
+                }
+                else
+                {
+                    x=9-x;
+                    y=8-y;
+                    pieces[1][13+i]->changePosition(x,y);
+                }
+            }
+            for(int i=13+num;i<15;i++)
+            {
+                if(isWaiting)
+                    pieces[0][i]->isDie=1;
+                else
+                    pieces[1][i]->isDie=1;
+            }
+
+            in>>num;
+            for(int i=0;i<num;i++)
+            {
+                in>>str;
+                y=str.toStdString()[1]-'0';
+                x=str.toStdString()[3]-'0';
+                if(isWaiting)
+                {
+                    pieces[0][11+i]->changePosition(x,y);
+                }
+                else
+                {
+                    x=9-x;
+                    y=8-y;
+                    pieces[1][11+i]->changePosition(x,y);
+                }
+            }
+            for(int i=11+num;i<13;i++)
+            {
+                if(isWaiting)
+                    pieces[0][i]->isDie=1;
+                else
+                    pieces[1][i]->isDie=1;
+            }
+
+
+            in>>num;
+            for(int i=0;i<num;i++)
+            {
+                in>>str;
+                y=str.toStdString()[1]-'0';
+                x=str.toStdString()[3]-'0';
+                if(isWaiting)
+                {
+                    pieces[0][5+i]->changePosition(x,y);
+                }
+                else
+                {
+                    x=9-x;
+                    y=8-y;
+                    pieces[1][5+i]->changePosition(x,y);
+                }
+            }
+            for(int i=5+num;i<7;i++)
+            {
+                if(isWaiting)
+                    pieces[0][i]->isDie=1;
+                else
+                    pieces[1][i]->isDie=1;
+            }
+
+            in>>num;
+            for(int i=0;i<num;i++)
+            {
+                in>>str;
+                y=str.toStdString()[1]-'0';
+                x=str.toStdString()[3]-'0';
+                if(isWaiting)
+                {
+                    pieces[0][7+i]->changePosition(x,y);
+                }
+                else
+                {
+                    x=9-x;
+                    y=8-y;
+                    pieces[1][7+i]->changePosition(x,y);
+                }
+            }
+            for(int i=7+num;i<9;i++)
+            {
+                if(isWaiting)
+                    pieces[0][i]->isDie=1;
+                else
+                    pieces[1][i]->isDie=1;
+            }
+
+            in>>num;
+            for(int i=0;i<num;i++)
+            {
+                in>>str;
+                y=str.toStdString()[1]-'0';
+                x=str.toStdString()[3]-'0';
+                if(isWaiting)
+                {
+                    pieces[0][9+i]->changePosition(x,y);
+                }
+                else
+                {
+                    x=9-x;
+                    y=8-y;
+                    pieces[1][9+i]->changePosition(x,y);
+                }
+            }
+            for(int i=9+num;i<11;i++)
+            {
+                if(isWaiting)
+                    pieces[0][i]->isDie=1;
+                else
+                    pieces[1][i]->isDie=1;
+            }
+            in>>num;
+            for(int i=0;i<num;i++)
+            {
+                in>>str;
+                y=str.toStdString()[1]-'0';
+                x=str.toStdString()[3]-'0';
+                if(isWaiting)
+                {
+                    pieces[0][i]->changePosition(x,y);
+                }
+                else
+                {
+                    x=9-x;
+                    y=8-y;
+                    pieces[1][i]->changePosition(x,y);
+                }
+            }
+            for(int i=num;i<5;i++)
+            {
+                if(isWaiting)
+                    pieces[0][i]->isDie=1;
+                else
+                    pieces[1][i]->isDie=1;
+            }
+
 }

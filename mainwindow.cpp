@@ -24,6 +24,28 @@ MainWindow::MainWindow(QWidget *parent) :
          }
     }
     scene->setSceneRect(10,10,521,561);
+    tcpServer = new QTcpServer(this);
+    tcpServer->listen(QHostAddress::Any,3737);
+    QObject::connect(tcpServer,SIGNAL(newConnection()),this,SLOT(acceptConnection()));
+    QObject::connect(game,SIGNAL(sendData(QByteArray)),this,SLOT(sendData(QByteArray)));
+}
+
+
+void MainWindow::acceptConnection()
+{
+    tcpSocket = tcpServer->nextPendingConnection();
+    QObject::connect(tcpSocket,SIGNAL(readyRead()),this,SLOT(readData()));
+}
+
+void MainWindow::readData()
+{
+    QByteArray arr = tcpSocket->readAll();
+    game->receivedData(arr);
+}
+
+void MainWindow::sendData(QByteArray arr)
+{
+    tcpSocket->write(arr);
 }
 
 MainWindow::~MainWindow()
