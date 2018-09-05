@@ -1,6 +1,16 @@
 #include "game.h"
-
-
+#include <QTextStream>
+void Game::updateMap()
+{
+    memset(mp,-1,sizeof(mp));
+    for(int i=0;i<16;i++)
+    {
+        if(pieces[0][i]->isDie==0)
+            mp[pieces[0][i]->i][pieces[0][i]->j]=0;
+        if(pieces[1][i]->isDie==0)
+            mp[pieces[1][i]->i][pieces[1][i]->j]=1;
+    }
+}
 Game::Game(QGraphicsScene* scene):scene(scene){
     //scene->addRect(QRectF(0,0,100,100));
     for(int i=0;i<5;i++)
@@ -40,6 +50,9 @@ Game::Game(QGraphicsScene* scene):scene(scene){
     pieces[1][15]=new Boss(Pos[0][4],1);
     for(int i=0;i<16;i++)
         scene->addItem(pieces[1][i]);
+    updateMap();
+    //QByteArray arr;
+    //receivedData(arr);
 }
 
 void Game::possiblePosition(BasicPiece* piece)
@@ -62,6 +75,8 @@ void Game::possiblePosition(BasicPiece* piece)
                 qDebug()<<"working "<<i;
                 cancelPosition(pieces[0][i]);
             }
+        updateMap();
+
         return;
     }
     for(int i=0;i<16;i++)
@@ -75,15 +90,18 @@ void Game::possiblePosition(BasicPiece* piece)
     {
         for(int j=0;j<9;j++)
         {
-            bool flag=0;
-            for(int k=0;k<16;k++)
-                if(pieces[0][k]->At(i,j))
-                {
-                    flag=1;
-                    break;
-                }
-            if(flag) continue;
-            if(piece->canMove(i,j))
+            int cnt=0;
+            if(pieces[0][15]->j==pieces[1][15]->j&&piece->j==pieces[1][15]->j&&j!=piece->j)
+            {
+                for(int k=pieces[1][15]->i+1;k<pieces[0][15]->i;k++)
+                    if(mp[k][pieces[1][15]->j]!=-1)
+                    {
+                        cnt++;
+                        if(piece->At(k,pieces[1][15]->j)) cnt--;
+                    }
+                if(cnt==0) continue;
+            }
+            if(piece->canMove(i,j,mp))
             {
                 selected[i][j] = new BasicPiece(Pos[i][j],2);
                 scene->addItem(selected[i][j]);
@@ -107,5 +125,97 @@ void Game::cancelPosition(BasicPiece* piece)
                 selected[i][j] = nullptr;
             }
         }
+    }
+    updateMap();
+}
+
+void Game::receivedData(QByteArray arr)
+{
+    arr.clear();
+    arr.append("1111");
+    for(int i=0;i<3;i++)
+        qDebug()<<"checkarr "<<i<<" "<<arr.at(i);
+
+    if(arr.at(0)=='1')
+    {
+        int t = arr.at(1)-'0';
+        int x = 9-arr.at(2)+'0';
+        int y = 8-arr.at(3)+'0';
+        scene->removeItem(pieces[1][t]);
+        pieces[1][t]->changePosition(x,y);
+        scene->addItem(pieces[1][t]);
+        for(int i=0;i<16;i++)
+            if(pieces[0][i]->At(x,y))
+                pieces[0][i]->isDie=1;
+        isWaiting = 0;
+    }
+    if(arr.at(0)=='2')
+    {
+        arr.remove(0,1);
+        QFile *file = new QFile("D:/canju.txt");
+        isWaiting = 1;
+        if(file->open(QIODevice::ReadWrite))
+        {
+            file->write(arr);
+            file->close();
+        }
+        loadFromFile(file);
+        /*for(int i=0;i<16;i++)
+        {
+            int x=9-arr.at(i*2+1)+'0';
+            int y=8-arr.at(i*2+2)+'0';
+            scene->removeItem(pieces[1][i]);
+            pieces[1][i]->changePosition(x,y);
+            scene->addItem(pieces[1][i]);
+        }
+        for(int i=0;i<16;i++)
+        {
+            int x=9-arr.at(i*2+33)+'0';
+            int y=8-arr.at(i*2+34)+'0';
+            scene->removeItem(pieces[0][i]);
+            pieces[0][i]->changePosition(x,y);
+            scene->addItem(pieces[0][i]);
+        }
+        int t = arr.at(65)-'0';
+        if(t==0) isWaiting = 1;
+        else isWaiting = 0;*/
+    }
+
+}
+
+Game::Game(QGraphicsScene *scene, QFile *file):scene(scene)
+{
+    scene->clear();
+    isWaiting = 0;
+    loadFromFile(file);
+}
+
+void Game::loadFromFile(QFile *file)
+{
+    if(!file->open(QIODevice::WriteOnly))
+    {
+        qDebug()<<"load error";
+        return;
+    }
+    QTextStream in(file);
+    QString str;
+    if(isWaiting)
+    {
+        while(1)
+        {
+            in>>str;
+            if(str=="black")
+                break;
+        }
+    }
+    else
+    {
+        while(1)
+        {
+            in>>str;
+            if(str=="red")
+                break;
+        }
+
     }
 }

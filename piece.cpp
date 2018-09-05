@@ -38,7 +38,7 @@ bool BasicPiece::At(int x,int y){
     if(isDie) return 0;
     return i==x&&j==y;
 }
-bool BasicPiece::canMove(int nx,int ny)
+bool BasicPiece::canMove(int nx,int ny,int mp[10][10])
 {
     return 0;
 }
@@ -74,10 +74,19 @@ void Soldier::paint(QPainter *painter,const QStyleOptionGraphicsItem *option
     painter->drawPixmap(rec,pixmap,QRectF(0,0,50,50));
 }
 
-bool Soldier::canMove(int nx,int ny)
+bool Soldier::canMove(int nx,int ny,int mp[10][10])
 {
-    if(id==0&&nx==i-1&&j==ny) return 1;
-    if(id==1&&nx==i+1&&j==ny) return 1;
+    if(mp[nx][ny]==id) return 0;
+    if(id==0)
+    {
+        if(i<5&&nx<=i&&i-nx+abs(ny-j)==1) return 1;
+        if(i>=5&&nx==i-1&&j==ny) return 1;
+    }
+    if(id==1)
+    {
+        if(i>=5&&nx>=i&&nx-i+abs(ny-j)==1) return 1;
+        if(i<5&&nx==i+1&&j==ny) return 1;
+    }
     return 0;
 }
 
@@ -103,9 +112,29 @@ void Horse::paint(QPainter *painter,const QStyleOptionGraphicsItem *option
     painter->drawPixmap(rec,pixmap,QRectF(0,0,50,50));
 }
 
-bool Horse::canMove(int nx,int ny)
+bool Horse::canMove(int nx,int ny,int mp[10][10])
 {
-    if(nx!=x&&ny!=y&&abs(nx-x)+abs(ny-y)==3) return 1;
+    if(mp[nx][ny]==id) return 0;
+    if(nx-i==2&&abs(ny-j)==1)
+    {
+        if(mp[i+1][j]!=-1) return 0;
+        return 1;
+    }
+    if(nx-i==-2&&abs(ny-j)==1)
+    {
+        if(mp[i-1][j]!=-1) return 0;
+        return 1;
+    }
+    if(ny-j==2&&abs(nx-i)==1)
+    {
+        if(mp[i][j+1]!=-1) return 0;
+        return 1;
+    }
+    if(ny-j==-2&&abs(nx-i)==1)
+    {
+        if(mp[i][j-1]!=-1) return 0;
+        return 1;
+    }
     return 0;
 }
 
@@ -131,10 +160,26 @@ void Pao::paint(QPainter *painter,const QStyleOptionGraphicsItem *option
     painter->drawPixmap(rec,pixmap,QRectF(0,0,50,50));
 }
 
-bool Pao::canMove(int nx,int ny)
+bool Pao::canMove(int nx,int ny,int mp[10][10])
 {
-    if(id==0&&nx==x+1&&y==ny) return 1;
-    if(id==1&&nx==x-1&&y==ny) return 1;
+    if(mp[nx][ny]==id) return 0;
+    int cnt=0;
+    if(nx==i)
+    {
+        for(int t=min(j,ny)+1;t<max(j,ny);t++)
+            if(mp[i][t]!=-1) cnt++;
+        if(cnt==0&&mp[nx][ny]==-1) return 1;
+        else if(cnt==1&&mp[nx][ny]!=-1) return 1;
+        else return 0;
+    }
+    if(ny==j)
+    {
+        for(int t=min(i,nx)+1;t<max(i,nx);t++)
+            if(mp[t][j]!=-1) cnt++;
+        if(cnt==0&&mp[nx][ny]==-1) return 1;
+        else if(cnt==1&&mp[nx][ny]!=-1) return 1;
+        else return 0;
+    }
     return 0;
 }
 
@@ -160,10 +205,24 @@ void Car::paint(QPainter *painter,const QStyleOptionGraphicsItem *option
     painter->drawPixmap(rec,pixmap,QRectF(0,0,50,50));
 }
 
-bool Car::canMove(int nx,int ny)
+bool Car::canMove(int nx,int ny,int mp[10][10])
 {
-    if(id==0&&nx==x+1&&y==ny) return 1;
-    if(id==1&&nx==x-1&&y==ny) return 1;
+    if(mp[nx][ny]==id) return 0;
+    int cnt=0;
+    if(nx==i)
+    {
+        for(int t=min(j,ny)+1;t<max(j,ny);t++)
+            if(mp[i][t]!=-1) cnt++;
+        if(cnt==0) return 1;
+        else return 0;
+    }
+    if(ny==j)
+    {
+        for(int t=min(i,nx)+1;t<max(i,nx);t++)
+            if(mp[t][j]!=-1) cnt++;
+        if(cnt==0) return 1;
+        else return 0;
+    }
     return 0;
 }
 
@@ -189,10 +248,14 @@ void Ele::paint(QPainter *painter,const QStyleOptionGraphicsItem *option
     painter->drawPixmap(rec,pixmap,QRectF(0,0,50,50));
 }
 
-bool Ele::canMove(int nx,int ny)
+bool Ele::canMove(int nx,int ny,int mp[10][10])
 {
-    if(id==0&&nx==x+1&&y==ny) return 1;
-    if(id==1&&nx==x-1&&y==ny) return 1;
+    if(mp[nx][ny]==id) return 0;
+    if(nx>=5&&abs(nx-i)==2&&abs(ny-j)==2)
+    {
+        if(mp[(i+nx)>>1][(j+ny)>>1]==-1) return 1;
+        return 0;
+    }
     return 0;
 }
 
@@ -218,10 +281,11 @@ void Man::paint(QPainter *painter,const QStyleOptionGraphicsItem *option
     painter->drawPixmap(rec,pixmap,QRectF(0,0,50,50));
 }
 
-bool Man::canMove(int nx,int ny)
+bool Man::canMove(int nx,int ny,int mp[10][10])
 {
-    if(id==0&&nx==x+1&&y==ny) return 1;
-    if(id==1&&nx==x-1&&y==ny) return 1;
+    if(mp[nx][ny]==id) return 0;
+    if(nx>6&&ny<6&&ny>2&&abs(i-nx)==1&&abs(j-ny)==1)
+        return 1;
     return 0;
 }
 
@@ -246,9 +310,10 @@ void Boss::paint(QPainter *painter,const QStyleOptionGraphicsItem *option
     painter->drawPixmap(rec,pixmap,QRectF(0,0,50,50));
 }
 
-bool Boss::canMove(int nx,int ny)
+bool Boss::canMove(int nx,int ny,int mp[10][10])
 {
-    if(id==0&&nx==x+1&&y==ny) return 1;
-    if(id==1&&nx==x-1&&y==ny) return 1;
+    if(mp[nx][ny]==id) return 0;
+    if(nx>6&&ny<6&&ny>2&&abs(i-nx)+abs(j-ny)==1)
+        return 1;
     return 0;
 }
