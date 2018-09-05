@@ -33,6 +33,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->pushButton_2->setEnabled(false);
     timer = new QTimer(this);
     connect(timer, SIGNAL(timeout()), this, SLOT(onTimeOut()));
+    file = nullptr;
 }
 
 MainWindow::~MainWindow()
@@ -54,12 +55,12 @@ void MainWindow::gameStart()
     }
     scene = new QGraphicsScene(this);
     ui->graphicsView->setScene(scene);
-    game = new Game(scene,identity,nullptr);
+    game = new Game(scene,identity,file);
     connect(game,SIGNAL(startTimeLimit()),this,SLOT(startTimeLimit()));
     connect(game,SIGNAL(stopTimeLimit()),this,SLOT(stopTimeLimit()));
     connect(game,SIGNAL(sendData(QByteArray)),this,SLOT(sendData(QByteArray)));
     connect(game,SIGNAL(win()),this,SLOT(win()));
-    connect(game,SIGNAL(lose()),this,SLOT(loseNoSend));
+    connect(game,SIGNAL(lose()),this,SLOT(loseNoSend()));
     game->start();
     ui->pushButton_2->setEnabled(true);
 }
@@ -191,24 +192,14 @@ void MainWindow::on_pushButton_2_clicked()
 
 void MainWindow::on_actionexit_triggered()
 {
-    /*QFileDialog*fileDialog=new QFileDialog(this);
+    QFileDialog*fileDialog=new QFileDialog(this);
     fileDialog->setWindowTitle(tr("Open Text"));
     fileDialog->setDirectory("./");
     if(fileDialog->exec() == QDialog::Accepted) {
         QString path = fileDialog->selectedFiles()[0];
         qDebug()<<path;
-        QFile *file=new QFile(path);
-        file->open(QIODevice::ReadOnly);
-        QByteArray arr;
-        arr.clear();
-        arr.append("2");
-        arr.append(file->readAll());
-        file->close();
-        sendData(arr);
-        game = new Game(scene);
-        game->loadFromFile(file);
-        QObject::connect(game,SIGNAL(sendData(QByteArray)),this,SLOT(sendData(QByteArray)));
-    }*/
+        file=new QFile(path);
+    }
 }
 
 void MainWindow::on_actionconnect_triggered()

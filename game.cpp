@@ -54,7 +54,16 @@ Game::Game(QGraphicsScene* scene,bool identity,QFile* file):scene(scene){
     for(int i=0;i<16;i++)
         scene->addItem(pieces[1][i]);
     if(file!=nullptr)
+    {
+        file->open(QIODevice::ReadOnly);
+        QByteArray arr;
+        arr.clear();
+        arr.append("2");
+        arr.append(file->readAll());
+        file->close();
+        sendData(arr);
         loadFromFile(file);
+    }
     updateMap();
 }
 

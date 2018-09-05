@@ -27,6 +27,7 @@ public:
     Game* game;
     bool identity;
     int seconds;
+    QFile *file;
     explicit MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
     void connectToHost(QHostAddress ip,qint16 port);
