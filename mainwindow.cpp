@@ -129,6 +129,17 @@ void MainWindow::connectSucceed()
     ui->lineEdit->setText(tcpSocket->peerAddress().toString());
     ui->pushButton->setText(tr("ready"));
     ui->pushButton->setEnabled(true);
+    if(file!=nullptr)
+    {
+        qDebug()<<"sendind file";
+        file->open(QIODevice::ReadOnly);
+        QByteArray arr;
+        arr.clear();
+        arr.append("2");
+        arr.append(file->readAll());
+        file->close();
+        sendData(arr);
+    }
 }
 
 void MainWindow::readData()
@@ -145,7 +156,7 @@ void MainWindow::readData()
             file->close();
         }
     }
-    if(arr.at(0)=='3')
+    else if(arr.at(0)=='3')
     {
         win();
     }

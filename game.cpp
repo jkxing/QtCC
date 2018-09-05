@@ -91,6 +91,8 @@ void Game::possiblePosition(BasicPiece* piece)
                 cancelPosition();
                 QByteArray arr;
                 arr.append("1");
+                if(i<10)
+                    arr.append("0");
                 arr.append(QString::number(i));
                 arr.append(QString::number(piece->i));
                 arr.append(QString::number(piece->j));
@@ -157,9 +159,9 @@ void Game::receivedData(QByteArray arr)
     qDebug()<<"game handling data: "<<arr;
     if(arr.at(0)=='1')
     {
-        int t = arr.at(1)-'0';
-        int x = 9-arr.at(2)+'0';
-        int y = 8-arr.at(3)+'0';
+        int t = (arr.at(1)-'0')*10+arr.at(2)-'0';
+        int x = 9-arr.at(3)+'0';
+        int y = 8-arr.at(4)+'0';
         scene->removeItem(pieces[1][t]);
         pieces[1][t]->changePosition(x,y);
         scene->addItem(pieces[1][t]);
