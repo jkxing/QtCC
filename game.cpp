@@ -2,7 +2,7 @@
 #include <QTextStream>
 #include <QMessageBox>
 #include <QApplication>
-void Game::updateMap()
+void Game::updateMap(bool flag)
 {
     memset(mp,-1,sizeof(mp));
     for(int i=0;i<16;i++)
@@ -17,7 +17,7 @@ void Game::updateMap()
     for(int i=0;i<16;i++)
     {
        // qDebug()<<i<<" "<<pieces[1][i]->i<<" "<<pieces[1][i]->j<<" "<<pieces[1][i]->canMove(pieces[0][15]->i,pieces[0][15]->j,mp);
-        if(pieces[1][i]->isDie==0&&pieces[1][i]->canMove(pieces[0][15]->i,pieces[0][15]->j,mp))
+        if(flag&&pieces[1][i]->isDie==0&&pieces[1][i]->canMove(pieces[0][15]->i,pieces[0][15]->j,mp))
             QApplication::beep();
     }
 }
@@ -104,6 +104,7 @@ void Game::possiblePosition(BasicPiece* piece)
                 qDebug()<<"working "<<i;
                 cancelPosition();
                 QByteArray arr;
+                arr.clear();
                 arr.append("1");
                 if(i<10)
                     arr.append("0");
@@ -334,6 +335,7 @@ void Game::receivedData(QByteArray arr)
         int t = (arr.at(1)-'0')*10+arr.at(2)-'0';
         int x = 9-arr.at(3)+'0';
         int y = 8-arr.at(4)+'0';
+        qDebug()<<t<<" "<<x<<" "<<y;
         scene->removeItem(pieces[1][t]);
         pieces[1][t]->changePosition(x,y);
         scene->addItem(pieces[1][t]);
@@ -347,7 +349,7 @@ void Game::receivedData(QByteArray arr)
         isWaiting = 0;
         emit startTimeLimit();
     }
-    updateMap();
+    updateMap(1);
 }
 
 void Game::loadFromFile(QFile *file)

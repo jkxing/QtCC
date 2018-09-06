@@ -16,7 +16,7 @@ public:
     bool isFirst;
     bool isWaiting;
     Game(QGraphicsScene* scene,bool identity,QFile* file);
-    void updateMap();
+    void updateMap(bool flag=0);
     void loadFromFile(QFile *file);
     void start();
     void save();

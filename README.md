@@ -36,11 +36,37 @@
 
 MainWindow类：
 
-​	提供主界面，网络连接，计时器，初始化等功能
+​	ui：主界面
+
+​	connectToHost：客户端连接到服务器
+
+​	connectSucceed：连接成功后的槽函数
+
+​	disConnect：客户端取消连接
+
+​	gameStart：通知Game类实例游戏开始
+
+​	reinit：重新初始化，准备下一局游戏
+
+​	readData：从tcpSocket中读取数据
+
+​	sendData：向tcpSocket写入数据
+
+​	startTimeLimit/endTimeLimie：计时开始/结束
+
+​	onTimeOut：和Qtimer关联，处理计时
+
+​	win/lose：显示输赢对话框
 
 BasicPieces类及其派生类Soldier,Horse,Pao,Car,Ele,Man,Boss：
 
-​	代表每个棋子，棋子实现了虚函数canMove(x,y,mp),用来检测能否在地图为mp的情况下到达目标点(x,y)，成员变量包括是否死亡，是否被选中等等
+​	均继承自QGraphicsObject，实现paint，boundingRect等函数
+
+​	canMove(x,y,mp):虚函数，检测能否在地图为mp的情况下到达目标点(x,y)
+
+​	changePosition(x,y):改变坐标到x,y
+
+​	at(x,y):判断是否在x,y
 
 Game类：
 

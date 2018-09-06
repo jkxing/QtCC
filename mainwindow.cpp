@@ -67,18 +67,17 @@ void MainWindow::gameStart()
 
 void MainWindow::reinit()
 {
+    timer->stop();
     if(game!=nullptr)
     {
         delete game;
         game = nullptr;
     }
     file = nullptr;
-    if(scene!=nullptr)
-    {
-        delete scene;
-        scene = nullptr;
-    }
+    scene->clear();
     ui->pushButton_2->setEnabled(false);
+    if(identity==1)
+        ui->pushButton->setEnabled(true);
 }
 
 void MainWindow::win()
