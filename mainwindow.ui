@@ -27,19 +27,6 @@
      <string notr="true">border-image: url(:/image/background.png);</string>
     </property>
    </widget>
-   <widget class="QLabel" name="label">
-    <property name="geometry">
-     <rect>
-      <x>570</x>
-      <y>40</y>
-      <width>121</width>
-      <height>31</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>我方</string>
-    </property>
-   </widget>
    <widget class="QLCDNumber" name="lcdNumber">
     <property name="geometry">
      <rect>
@@ -105,7 +92,7 @@
      <x>0</x>
      <y>0</y>
      <width>734</width>
-     <height>17</height>
+     <height>22</height>
     </rect>
    </property>
    <widget class="QMenu" name="menu">
@@ -114,8 +101,11 @@
     </property>
     <addaction name="actionexit"/>
     <addaction name="actionsave"/>
-    <addaction name="actionadd"/>
     <addaction name="actionconnect"/>
+    <addaction name="actiondisconnect"/>
+    <addaction name="actionlisten"/>
+    <addaction name="actiondislisten"/>
+    <addaction name="actionadd"/>
    </widget>
    <addaction name="menu"/>
   </widget>
@@ -147,6 +137,21 @@
   <action name="actionconnect">
    <property name="text">
     <string>connect</string>
+   </property>
+  </action>
+  <action name="actionlisten">
+   <property name="text">
+    <string>listen</string>
+   </property>
+  </action>
+  <action name="actiondislisten">
+   <property name="text">
+    <string>dislisten</string>
+   </property>
+  </action>
+  <action name="actiondisconnect">
+   <property name="text">
+    <string>disconnect</string>
    </property>
   </action>
  </widget>

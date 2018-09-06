@@ -25,7 +25,6 @@ MainWindow::MainWindow(QWidget *parent) :
     }
     scene->setSceneRect(10,10,521,561);
     tcpServer = new QTcpServer(this);
-    tcpServer->listen(QHostAddress::Any,3737);
     QObject::connect(tcpServer,SIGNAL(newConnection()),this,SLOT(acceptConnection()));
     game = nullptr;
     tcpSocket = nullptr;
@@ -63,11 +62,29 @@ void MainWindow::gameStart()
     connect(game,SIGNAL(lose()),this,SLOT(loseNoSend()));
     game->start();
     ui->pushButton_2->setEnabled(true);
+    ui->pushButton->setEnabled(false);
+}
+
+void MainWindow::reinit()
+{
+    if(game!=nullptr)
+    {
+        delete game;
+        game = nullptr;
+    }
+    file = nullptr;
+    if(scene!=nullptr)
+    {
+        delete scene;
+        scene = nullptr;
+    }
+    ui->pushButton_2->setEnabled(false);
 }
 
 void MainWindow::win()
 {
     QMessageBox::information(this,"Congratulation","You win");
+    reinit();
 }
 
 void MainWindow::lose()
@@ -77,6 +94,7 @@ void MainWindow::lose()
     arr.append("3");
     sendData(arr);
     QMessageBox::information(this,"sorry","You lose");
+    reinit();
 }
 
 void MainWindow::loseNoSend()
@@ -114,13 +132,25 @@ void MainWindow::acceptConnection()
 
 void MainWindow::connectToHost(QHostAddress ip,qint16 port)
 {
+    if(tcpSocket!=nullptr)
+    {
+        tcpSocket->close();
+        delete tcpSocket;
+        tcpSocket=nullptr;
+    }
     tcpSocket = new QTcpSocket(this);
     QObject::connect(tcpSocket,SIGNAL(connected()),this,SLOT(connectSucceed()));
     QObject::connect(tcpSocket,SIGNAL(readyRead()),this,SLOT(readData()));
+    QObject::connect(tcpSocket,SIGNAL(disconnected()),this,SLOT(disConnect()));
     tcpSocket->connectToHost(ip,quint16(port));
     qDebug()<<"connecting to server";
 }
 
+void MainWindow::disConnect()
+{
+    tcpServer->close();
+    ui->pushButton->setEnabled(false);
+}
 void MainWindow::connectSucceed()
 {
     identity = 1;
@@ -252,4 +282,34 @@ void MainWindow::on_actionsave_triggered()
     arr.append("6");
     sendData(arr);
     game->save();
+}
+
+void MainWindow::on_actionlisten_triggered()
+{
+    if(!islisten)
+    {
+        tcpServer->listen(QHostAddress::Any,3737);
+        islisten = 1;
+        ui->statusbar->showMessage("listening",100000);
+    }
+}
+
+
+void MainWindow::on_actiondislisten_triggered()
+{
+    if(islisten)
+    {
+        tcpServer->close();
+        islisten = 0;
+        ui->statusbar->showMessage("cancel listen",1000);
+    }
+}
+
+void MainWindow::on_actiondisconnect_triggered()
+{
+    if(tcpSocket->isOpen())
+    {
+        tcpSocket->disconnectFromHost();
+        ui->pushButton->setEnabled(false);
+    }
 }

@@ -26,12 +26,14 @@ public:
     QTimer* timer;
     Game* game;
     bool identity;
+    bool islisten;
     int seconds;
     QFile *file;
     explicit MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
     void connectToHost(QHostAddress ip,qint16 port);
     void gameStart();
+    void reinit();
 public slots:
     void on_pushButton_clicked();
 
@@ -65,8 +67,15 @@ public slots:
 
     void lose();
 
+    void disConnect();
 private slots:
     void on_actionsave_triggered();
+
+    void on_actionlisten_triggered();
+
+    void on_actiondislisten_triggered();
+
+    void on_actiondisconnect_triggered();
 
 private:
     Ui::MainWindow *ui;
