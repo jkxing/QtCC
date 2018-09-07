@@ -9,6 +9,7 @@
 #include <QMessageBox>
 
 #include <connectdialog.h>
+#include <QTest>
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
@@ -172,6 +173,7 @@ void MainWindow::connectSucceed()
 
 void MainWindow::readData()
 {
+    QTest::qSleep(50);
     QByteArray arr = tcpSocket->readAll();
     qDebug()<<"received "<<arr;
     if(arr.at(0)=='2')
