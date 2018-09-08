@@ -117,7 +117,10 @@ void Game::possiblePosition(BasicPiece* piece)
                 break;
             }
         if(flag)
+        {
             emit win();
+            return;
+        }
         updateMap();
         return;
     }
@@ -344,7 +347,10 @@ void Game::receivedData(QByteArray arr)
              {
                 pieces[0][i]->isDie=1;
                 if(i==15)
+                {
                     emit lose();
+                    return;
+                }
              }
         isWaiting = 0;
         emit startTimeLimit();

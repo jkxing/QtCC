@@ -69,11 +69,6 @@ void MainWindow::gameStart()
 void MainWindow::reinit()
 {
     timer->stop();
-    if(game!=nullptr)
-    {
-        delete game;
-        game = nullptr;
-    }
     file = nullptr;
     scene->clear();
     ui->pushButton_2->setEnabled(false);
@@ -100,12 +95,13 @@ void MainWindow::lose()
 void MainWindow::loseNoSend()
 {
     QMessageBox::information(this,"sorry","You lose");
+    reinit();
 }
 
 void MainWindow::startTimeLimit()
 {
     qDebug()<<"startTimeLimit";
-    seconds = 60;
+    seconds = 20;
     timer->start(1000);
 }
 
